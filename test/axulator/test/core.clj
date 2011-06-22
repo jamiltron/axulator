@@ -34,3 +34,28 @@
   (is (= 18 (:carrier cost)))
   (is (= 5 (:antiaircraft cost)))
   (is (= 24 (:battleship cost))))
+
+(def all (range 1 6))
+
+(deftest attacking
+  (is (= 1 (attacker-hits 1 :infantry all)))
+  (is (= 1 (attacker-hits 6 :infantry all)))
+  (is (= 3 (attacker-hits 6 :armor all)))
+  (is (= 4 (attacker-hits 6 :bomber all)))
+  (is (= 2 (attacker-hits 6 :submarine all)))
+  (is (= 0 (attacker-hits 6 :transport all)))
+  (is (= 1 (attacker-hits 6 :carrier all)))
+  (is (= 0 (attacker-hits 6 :antiaircraft all)))
+  (is (= 4 (attacker-hits 6 :battleship all))))
+
+(deftest defending
+  (is (= 1 (defender-hits 1 :infantry all)))
+  (is (= 2 (defender-hits 6 :infantry all)))
+  (is (= 2 (defender-hits 6 :armor all)))
+  (is (= 4 (defender-hits 6 :fighter all)))
+  (is (= 1 (defender-hits 6 :bomber all)))
+  (is (= 2 (defender-hits 6 :submarine all)))
+  (is (= 1 (defender-hits 6 :transport all)))
+  (is (= 3 (defender-hits 6 :carrier all)))
+  (is (= 1 (defender-hits 6 :antiaircraft all)))
+  (is (= 4 (defender-hits 6 :battleship all))))
