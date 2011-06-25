@@ -1,13 +1,20 @@
 # axulator
 
-FIXME: write description
+Axulator is a simple little utility to evaluate battles for the game Axis & Allies.  It helps players of the game evaluate the odds of winning a particular battle between forces by simulating the battle and providing basic statistics on the outcome.
 
 ## Usage
 
-FIXME: write
+At this point, you can evaluate the number of hits for an attacking or defending force by:
+
+  (force-hits :attack [[5 :infantry] [10 :armor] [2 :fighter]] (d6))
+
+  (force-hits :defned [[20 :infantry] [2 :armor]] (d6))
+
+As it is developed further, it will iterate over a particular battle and provide stats to help
+assess the probability of either side winning.
 
 ## License
 
-Copyright (C) 2011 FIXME
+Copyright (C) 2011 Kevin W. Beam
 
 Distributed under the Eclipse Public License, the same as Clojure.
