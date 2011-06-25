@@ -41,6 +41,7 @@
   (is (= 1 (hits :attack 1 :infantry all)))
   (is (= 1 (hits :attack 6 :infantry all)))
   (is (= 3 (hits :attack 6 :armor all)))
+  (is (= 3 (hits :attack 6 :fighter all)))
   (is (= 4 (hits :attack 6 :bomber all)))
   (is (= 2 (hits :attack 6 :submarine all)))
   (is (= 0 (hits :attack 6 :transport all)))
@@ -59,3 +60,14 @@
   (is (= 3 (hits :defend 6 :carrier all)))
   (is (= 1 (hits :defend 6 :antiaircraft all)))
   (is (= 4 (hits :defend 6 :battleship all))))
+
+(deftest force-attacking
+  (is (= 1 (force-hits :attack [[1 :infantry]] all)))
+  (is (= 4 (force-hits :attack [[6 :infantry] [6 :armor]] all)))
+  (is (= 7 (force-hits :attack [[6 :infantry] [6 :armor] [6 :fighter]] all))))
+
+(deftest force-defending
+  (is (= 1 (force-hits :defend [[1 :infantry]] all)))
+  (is (= 2 (force-hits :defend [[6 :infantry]] all)))
+  (is (= 4 (force-hits :defend [[6 :infantry] [6 :armor]] all)))
+  (is (= 9 (force-hits :defend [[6 :submarine] [6 :carrier] [6 :battleship]] all))))

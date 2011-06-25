@@ -41,3 +41,6 @@
 (defn hits [mode num unit die]
   (let [max-roll (max-die-roll mode unit)]
     (count (filter (fn [x] (<= x max-roll)) (take num die)))))
+
+(defn force-hits [mode force die]
+  (reduce + 0 (map (fn [u] (hits mode (first u) (second u) die)) force)))
