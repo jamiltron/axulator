@@ -44,3 +44,47 @@
 
 (defn force-hits [mode force die]
   (reduce + 0 (map (fn [u] (hits mode (first u) (second u) die)) force)))
+
+(defn reduce-unit [unit hits]
+  (let [num (first unit)
+        unit-type (second unit)]
+    (if (< hits num)
+      (vector (- num hits) unit-type)
+      nil)))
+
+(defn reduce-force [force hits]
+  (let [first-unit (first force)
+        remaining-units (rest force)
+        hits-taken (min (first first-unit) hits)
+        remaining-hits (- hits hits-taken)
+        new-unit (reduce-unit first-unit hits-taken)]
+    (if (= 0 remaining-hits)
+      (if (empty? new-unit)
+        (vec remaining-units)
+        (if (empty? remaining-units)
+          (vector new-unit)
+          (vec (cons new-unit remaining-units))))
+      (if (not (empty? remaining-units))
+        (reduce-force remaining-units remaining-hits)
+        []))))
+
+(defn battle-winner [battle-linup attacker-die defender-die]
+  (let [attacker (:attacker battle-linup)
+        defender (:defender battle-linup)
+        attacker-hits (force-hits :attack attacker attacker-die)
+        defender-hits (force-hits :defend defender defender-die)]
+    (cond (empty? attacker) :defender
+          (empty? defender) :attacker
+          :else (battle-winner {:attacker (reduce-force attacker defender-hits)
+                                :defender (reduce-force defender attacker-hits)}
+                               attacker-die
+                               defender-die))))
+
+(defn attacker-wins [battle-lineup die-generator trials]
+  (count (filter (fn [r] (= r :attacker))
+                 (repeatedly trials
+                             (fn [] (battle-winner battle-lineup (die-generator) (die-generator)))))))
+
+
+
+

@@ -71,3 +71,39 @@
   (is (= 2 (force-hits :defend [[6 :infantry]] all)))
   (is (= 4 (force-hits :defend [[6 :infantry] [6 :armor]] all)))
   (is (= 9 (force-hits :defend [[6 :submarine] [6 :carrier] [6 :battleship]] all))))
+
+(deftest unit-reduction
+  (is (= [2 :infantry] (reduce-unit [2 :infantry] 0)))
+  (is (= [1 :infantry] (reduce-unit [2 :infantry] 1)))
+  (is (= nil (reduce-unit [2 :infantry] 2)))
+  (is (= nil (reduce-unit [2 :infantry] 10))))
+
+(deftest force-reduction
+  (is (= [[1 :infantry]] (reduce-force [[2 :infantry]] 1)))
+  (is (= [] (reduce-force [[2 :infantry]] 2)))
+  (is (= [] (reduce-force [[2 :infantry]] 1000)))
+  (is (= [[1 :infantry] [4 :fighter]] (reduce-force [[2 :infantry] [4 :fighter]] 1)))
+  (is (= [[4 :fighter]] (reduce-force [[2 :infantry] [4 :fighter]] 2)))
+  (is (= [[3 :fighter]] (reduce-force [[2 :infantry] [4 :fighter]] 3)))
+  (is (= [[1 :fighter]] (reduce-force [[2 :infantry] [4 :fighter]] 5)))
+  (is (= [] (reduce-force [[2 :infantry] [4 :fighter]] 6)))
+  (is (= [[10000 :bomber]]
+         (reduce-force [[5 :infantry] [5 :fighter] [10 :battleship] [10000 :bomber]] 20)))
+  (is (= [] (reduce-force [[1000 :infantry] [1000 :bomber] [1000 :fighter]] 10000))))
+
+(deftest battle
+  (is (= :attacker (battle-winner {:attacker [[1 :armor]], :defender [[1 :infantry]]} [1] [6])))
+  (is (= :defender (battle-winner {:attacker [[1 :armor]], :defender [[1 :infantry]]} [6] [1])))
+  (is (= :defender (battle-winner {:attacker [[1 :armor]], :defender [[1 :infantry]]} [1] [1])))
+  (is (= :attacker (battle-winner {:attacker [[1 :armor]], :defender [[5 :infantry]]}
+                                  [3 3 3 3 3]
+                                  [6 6 6 6 6])))
+  (is (= :defender (battle-winner {:attacker [[5 :armor]], :defender [[1 :infantry]]}
+                                  [6 6 6 6 6]
+                                  [1 1 1 1 1])))
+  (is (= :attacker (battle-winner {:attacker [[1 :armor]], :defender [[1 :infantry] [1 :armor]]}
+                                  [1 1]
+                                  [6 6])))
+  (is (= :defender (battle-winner {:attacker [[1 :infantry] [1 :armor]] :defender [[1 :armor]]}
+                                  [6 6]
+                                  [1 1]))))
