@@ -73,10 +73,9 @@
   (is (= 9 (force-hits :defend [[6 :submarine] [6 :carrier] [6 :battleship]] all))))
 
 (deftest unit-reduction
-  (is (= [2 :infantry] (reduce-unit [2 :infantry] 0)))
-  (is (= [1 :infantry] (reduce-unit [2 :infantry] 1)))
-  (is (= nil (reduce-unit [2 :infantry] 2)))
-  (is (= nil (reduce-unit [2 :infantry] 10))))
+  (is (= nil (reduce-unit [1 :infantry])))
+  (is (= [1 :infantry] (reduce-unit [2 :infantry])))
+  (is (= [2 :infantry] (reduce-unit [3 :infantry]))))
 
 (deftest force-reduction
   (is (= [[1 :infantry]] (reduce-force [[2 :infantry]] 1)))
