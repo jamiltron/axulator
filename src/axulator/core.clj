@@ -76,7 +76,7 @@
                                attacker-die
                                defender-die))))
 
-(defn attacker-wins [battle-lineup die-generator trials]
-  (count (filter (fn [r] (= r :attacker))
+(defn wins [side battle-lineup die-generator trials]
+  (count (filter (fn [r] (= r side))
                  (repeatedly trials
                              (fn [] (battle-winner battle-lineup (die-generator) (die-generator)))))))
