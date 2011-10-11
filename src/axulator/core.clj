@@ -78,7 +78,7 @@
                  (repeatedly trials
                              (fn [] (battle-winner battle-lineup die die))))))
 
-(defn outcomes [battle-lineup die trials]
+(defn win-percentages [battle-lineup die trials]
   (let [attacker-wins (wins :attacker battle-lineup die trials)
         defender-wins (- trials attacker-wins)]
     (hash-map :attacker (float (/ attacker-wins trials))
