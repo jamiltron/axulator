@@ -32,9 +32,6 @@
 
 (def tables {:attack attack, :defend defend, :cost cost})
 
-(defn d6 []
-  (repeatedly (fn [] (inc (rand-int 6)))))
-
 (defn- max-die-roll [mode unit]
   (unit (mode tables)))
 
@@ -64,20 +61,28 @@
 (defn reduce-force [force n]
   (nth (iterate reduce-force-by-one force) n))
 
-(defn battle-winner [battle-linup attacker-die-generator defender-die-generator]
+(defn battle-winner [battle-linup attacker-die defender-die]
   (let [attacker (:attacker battle-linup)
         defender (:defender battle-linup)
-        attacker-hits (force-hits :attack attacker (attacker-die-generator))
-        defender-hits (force-hits :defend defender (attacker-die-generator))]
-    (do (println battle-linup)
-        (cond (empty? attacker) :defender
-                                     (empty? defender) :attacker
-                                     :else (battle-winner {:attacker (reduce-force attacker defender-hits)
-                                                           :defender (reduce-force defender attacker-hits)}
-                                                          attacker-die-generator
-                                                          defender-die-generator)))))
+        attacker-hits (force-hits :attack attacker (attacker-die))
+        defender-hits (force-hits :defend defender (defender-die))]
+    (cond (empty? attacker) :defender
+          (empty? defender) :attacker
+          :else (battle-winner {:attacker (reduce-force attacker defender-hits)
+                                :defender (reduce-force defender attacker-hits)}
+                               attacker-die
+                               defender-die))))
 
-(defn wins [side battle-lineup die-generator trials]
+(defn wins [side battle-lineup die trials]
   (count (filter (fn [r] (= r side))
                  (repeatedly trials
-                             (fn [] (battle-winner battle-lineup die-generator die-generator))))))
+                             (fn [] (battle-winner battle-lineup die die))))))
+
+(defn outcomes [battle-lineup die trials]
+  (let [attacker-wins (wins :attacker battle-lineup die trials)
+        defender-wins (- trials attacker-wins)]
+    (hash-map :attacker (float (/ attacker-wins trials))
+              :defender (float (/ defender-wins trials)))))
+
+(defn d6 []
+  (repeatedly (fn [] (inc (rand-int 6)))))
