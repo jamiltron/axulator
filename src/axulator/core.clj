@@ -50,13 +50,14 @@
       nil)))
 
 (defn reduce-force-by-one [force]
-  (cond (empty? force) []
-        (= (first (first force)) 1) (vec (rest force))
-        :else (let [new-unit (reduce-unit (first force))]
-                   (cond (not (empty? (rest force)))
-                         (cons new-unit (rest force))
+  (let [[head & backup] force]
+    (cond (empty? force) []
+        (= (first head) 1) (vec backup)
+        :else (let [new-unit (reduce-unit head)]
+                   (cond (not (empty? backup))
+                         (cons new-unit backup)
                          :else
-                         (vector new-unit)))))
+                         (vector new-unit))))))
 
 (defn reduce-force [force n]
   (nth (iterate reduce-force-by-one force) n))
